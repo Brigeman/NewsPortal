@@ -1,5 +1,6 @@
-<!-- news/templates/news/news_list.html -->
 {% extends 'newsportal/default.html' %}
+{% load news_filters %}
+
 
 {% block content %}
   <h2>Список новостей</h2>
@@ -15,4 +16,11 @@
       </li>
     {% endfor %}
   </ul>
+
+  {# Применение фильтра censor #}
+  {% for post in news %}
+    <h2>{{ post.title|censor }}</h2>
+    <p>{{ post.content|censor }}</p>
+  {% endfor %}
+
 {% endblock %}
