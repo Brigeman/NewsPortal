@@ -1,0 +1,11 @@
+<!-- news/templates/news/news_edit.html -->
+{% extends 'newsportal/default.html' %}
+
+{% block content %}
+  <h2>Edit News</h2>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Save Changes</button>
+  </form>
+{% endblock %}

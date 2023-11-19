@@ -1,0 +1,22 @@
+<!-- В файле newsportal/templates/newsportal/search_results.html -->
+
+{% extends 'newsportal/default.html' %}
+
+{% block content %}
+  <h2>Результаты поиска</h2>
+
+  {% if news_results %}
+    <ul>
+      {% for result in news_results %}
+        <li>
+          <h3>{{ result.title }}</h3>
+          <p>{{ result.created_at|date:"d.m.Y" }}</p>
+          <p>{{ result.content|truncatewords:20 }}</p>
+          <a href="{% url 'news_detail' result.id %}">Подробнее</a>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>Ничего не найдено.</p>
+  {% endif %}
+{% endblock %}

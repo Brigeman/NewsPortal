@@ -1,0 +1,42 @@
+{% extends 'newsportal/default.html' %}
+{% load news_filters %}
+
+{% block content %}
+  <h2>Список статей</h2>
+  <p>Всего статей: {{ articles|length }}</p>
+
+  <ul>
+    {% for article in articles %}
+      <li>
+        <h3>{{ article.title }}</h3>
+        <p>{{ article.created_at|date:"d.m.Y" }}</p>
+        <p>{{ article.content|truncatewords:20 }}</p>
+        <a href="{% url 'articles_list' %}">Подробнее</a>
+      </li>
+    {% endfor %}
+  </ul>
+
+  {# Применение фильтра censor #}
+  {% for article in articles %}
+    <h2>{{ article.title|censor }}</h2>
+    <p>{{ article.content|censor }}</p>
+  {% endfor %}
+
+  <div class="pagination">
+    <span class="step-links">
+      {% if articles.has_previous %}
+        <a href="?page=1">&laquo; первая</a>
+        <a href="?page={{ articles.previous_page_number }}">предыдущая</a>
+      {% endif %}
+
+      <span class="current">
+        Страница {{ articles.number }} из {{ articles.paginator.num_pages }}.
+      </span>
+
+      {% if articles.has_next %}
+        <a href="?page={{ articles.next_page_number }}">следующая</a>
+        <a href="?page={{ articles.paginator.num_pages }}">последняя &raquo;</a>
+      {% endif %}
+    </span>
+  </div>
+{% endblock %}

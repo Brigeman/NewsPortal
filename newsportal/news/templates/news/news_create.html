@@ -1,0 +1,11 @@
+<!-- news/templates/news/news_create.html -->
+{% extends 'newsportal/default.html' %}
+
+{% block content %}
+  <h2>Create News</h2>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Create</button>
+  </form>
+{% endblock %}

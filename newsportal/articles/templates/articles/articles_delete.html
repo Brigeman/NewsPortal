@@ -1,0 +1,10 @@
+{% extends 'newsportal/default.html' %}
+
+{% block content %}
+  <h2>Delete Articles</h2>
+  <p>Are you sure you want to delete this article?</p>
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit">Confirm Delete article</button>
+  </form>
+{% endblock %}

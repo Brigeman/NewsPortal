@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'portal',
     'news',
     'newsportal',
+    'articles'
 ]
 
 MIDDLEWARE = [
