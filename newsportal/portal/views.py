@@ -34,3 +34,4 @@ def search_news(request):
         news_results = []
 
     return render(request, 'portal/search_results.html', {'news_results': news_results})
+

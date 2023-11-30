@@ -22,5 +22,6 @@ urlpatterns = [
     path('', include('news.urls')),  # Включаем urls из приложения news
     path('portal/', include('portal.urls')),  # Включаем urls из приложения portal
     path('articles/', include('articles.urls')), # включаем urls из приложения articles
-    path("accounts/", include("allauth.urls")) # авторизация
+    path("accounts/", include("allauth.urls")), # авторизация
+    path('subscriptions/', include('subscriptions.urls'))
 ]

@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+
 class Author(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     rating = models.IntegerField(default=0)
@@ -58,7 +59,6 @@ class Post(models.Model):
 
     def preview(self):
         return self.content[:124] + '...' if len(self.content) > 124 else self.content
-
 
 
 # Модель для связи между Post и Category

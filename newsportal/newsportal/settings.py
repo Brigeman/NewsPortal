@@ -12,10 +12,17 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 import os
+from dotenv import load_dotenv
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Путь к файлу .env
+dotenv_path = os.path.join(BASE_DIR, '.env')
+
+# Загрузка переменных среды из файла .env
+load_dotenv(dotenv_path)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -43,6 +50,8 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.yandex',
+    'django_apscheduler',
+    'subscriptions',
     'portal',
     'news',
     'newsportal',
@@ -92,8 +101,6 @@ DATABASES = {
 }
 
 
-# Password validation
-# https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -148,3 +155,14 @@ SITE_ID = 1
 LOGIN_REDIRECT_URL = '/articles/'
 LOGOUT_REDIRECT_URL = '/accounts/login/'
 ACCOUNT_FORMS = {"signup": "accounts.forms.CustomSignupForm"}
+
+# Добавляем функционал направления email
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_HOST = 'smtp.yandex.ru'
+EMAIL_PORT = 465
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+EMAIL_USE_TLS = False
+EMAIL_USE_SSL = True
+SITE_URL = 'http://127.0.0.1:8000/'
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL')

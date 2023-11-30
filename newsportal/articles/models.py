@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 class Article(models.Model):
     author = models.CharField(max_length=100)
@@ -8,3 +9,4 @@ class Article(models.Model):
 
     def __str__(self):
         return self.title
+
