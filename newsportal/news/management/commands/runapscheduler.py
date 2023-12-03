@@ -36,7 +36,7 @@ def my_job():
 
                 send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [user_email])
 
-                # Update the last notification date for the user's subscription
+
                 subscription.last_notification_date = Post.objects.latest('created_at').created_at
                 subscription.save()
 
