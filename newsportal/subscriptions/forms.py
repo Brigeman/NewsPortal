@@ -16,3 +16,12 @@ class UnsubscriptionForm(forms.ModelForm):
         labels = {
             'category': 'Выберите категории для отписки'
         }
+
+#new
+
+class UnsubscribeForm(forms.Form):
+    categories = forms.ModelMultipleChoiceField(
+        queryset=Category.objects.all(),
+        widget=forms.CheckboxSelectMultiple,
+        label='Выберете категорию отписки'
+    )

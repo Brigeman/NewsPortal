@@ -19,10 +19,10 @@ def news_add(instance, created, **kwargs):
     subject = f'Новая новость {instance.category}'
 
     text_content = (
-        f'Ссылка на новость: http://127.0.0.1:8000{instance.get_absolute_url()}'
+        f'Ссылка на новость: http://127.0.0.1:8000{instance.get_absolute_url()}' # временная ссылка
     )
     html_content = (
-        f'<a href="http://127.0.0.1:8000{instance.get_absolute_url()}">'
+        f'<a href="http://127.0.0.1:8000{instance.get_absolute_url()}">'# временная ссылка 
         f'Ссылка на новость</a>'
     )
     for email in emails:

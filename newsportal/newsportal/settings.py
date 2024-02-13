@@ -13,6 +13,9 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from pathlib import Path
 import os
 from dotenv import load_dotenv
+import logging.config
+from django.utils.log import AdminEmailHandler
+
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -35,6 +38,96 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+# Определение базовой директории проекта
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Создание директории для логов, если она не существует
+LOGS_DIR = BASE_DIR / 'logs'
+LOGS_DIR.mkdir(parents=True, exist_ok=True)
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'standard': {
+            'format': '%(asctime)s [%(levelname)s] %(name)s: %(message)s'
+        },
+        'detailed': {
+            'format': '%(asctime)s [%(levelname)s] %(pathname)s: %(message)s'
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'standard',
+        },
+        'file_general': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR, 'logs', 'general.log'),
+            'formatter': 'standard',
+        },
+        'file_errors': {
+            'level': 'ERROR',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR, 'logs', 'errors.log'),
+            'formatter': 'detailed',
+        },
+        'file_security': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR, 'logs', 'security.log'),
+            'formatter': 'standard',
+        },
+        'mail_admins': {
+            'level': 'ERROR',
+            'class': 'django.utils.log.AdminEmailHandler',
+            'formatter': 'detailed',
+        },
+    },
+    'loggers': {
+        'django.request': {
+            'handlers': ['mail_admins', 'file_errors'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+        'django.server': {
+            'handlers': ['mail_admins', 'file_errors'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+        'django.security': {
+            'handlers': ['file_security'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+    },
+}
+
+# Условные настройки в зависимости от значения DEBUG
+if DEBUG:
+    LOGGING['handlers']['console']['level'] = 'DEBUG'
+    LOGGING['handlers']['file_general']['level'] = 'INFO'
+    LOGGING['handlers']['mail_admins']['level'] = 'ERROR'
+else:
+    LOGGING['handlers']['console']['level'] = 'WARNING'
+    LOGGING['handlers']['file_general']['level'] = 'INFO'
+    LOGGING['handlers']['mail_admins']['level'] = 'ERROR'
+
+# Добавление логгирования почтовых сообщений в AdminEmailHandler
+mail_admins_handler = LOGGING['handlers']['mail_admins']
+mail_admins_handler['filters'] = ['require_debug_false']
+
+# Настройка фильтров
+LOGGING['filters'] = {
+    'require_debug_false': {
+        '()': 'django.utils.log.RequireDebugFalse',
+    },
+}
+
+# Применение настроек логирования
+logging.config.dictConfig(LOGGING)
 
 # Application definition
 
@@ -95,9 +188,13 @@ WSGI_APPLICATION = 'newsportal.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('DB_NAME'),
+        'USER': os.getenv('DB_USER'),
+        'PASSWORD': os.getenv('DB_PASSWORD'),
+        'HOST': os.getenv('DB_HOST'),
+        'PORT': os.getenv('DB_PORT'),
+    },
 }
 
 
@@ -178,7 +275,7 @@ CELERY_RESULT_SERIALIZER = 'json'
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
-        'LOCATION': 'unique-snowflake',  # Это значение не имеет значения для DummyCache
+        'LOCATION': 'unique-snowflake',
     }
 }
 

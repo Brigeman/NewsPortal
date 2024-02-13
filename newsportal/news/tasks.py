@@ -6,6 +6,7 @@ from django.conf import settings
 from datetime import timedelta
 from django.utils import timezone
 
+
 @shared_task
 def notify_subscribers_about_news(post_id):
     post = Post.objects.get(id=post_id)
@@ -20,7 +21,6 @@ def notify_subscribers_about_news(post_id):
             [subscription.user.email],  # Отправить на адрес пользователя, подписанного на категорию
             fail_silently=False,
         )
-
 
 
 @shared_task
