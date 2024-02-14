@@ -49,10 +49,16 @@ LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'formatters': {
-        'standard': {
-            'format': '%(asctime)s [%(levelname)s] %(name)s: %(message)s'
+        'console_formatter': {
+            'format': '%(asctime)s [%(levelname)s] %(message)s'
         },
-        'detailed': {
+        'file_formatter': {
+            'format': '%(asctime)s [%(levelname)s] %(module)s: %(message)s'
+        },
+        'error_formatter': {
+            'format': '%(asctime)s [%(levelname)s] %(pathname)s: %(message)s\n%(exc_info)s'
+        },
+        'email_formatter': {
             'format': '%(asctime)s [%(levelname)s] %(pathname)s: %(message)s'
         },
     },
@@ -60,74 +66,51 @@ LOGGING = {
         'console': {
             'level': 'DEBUG',
             'class': 'logging.StreamHandler',
-            'formatter': 'standard',
+            'formatter': 'console_formatter',
+            'filters': ['require_debug_true'],
         },
         'file_general': {
             'level': 'INFO',
             'class': 'logging.FileHandler',
             'filename': os.path.join(BASE_DIR, 'logs', 'general.log'),
-            'formatter': 'standard',
+            'formatter': 'file_formatter',
         },
         'file_errors': {
             'level': 'ERROR',
             'class': 'logging.FileHandler',
             'filename': os.path.join(BASE_DIR, 'logs', 'errors.log'),
-            'formatter': 'detailed',
+            'formatter': 'error_formatter',
         },
         'file_security': {
             'level': 'INFO',
             'class': 'logging.FileHandler',
             'filename': os.path.join(BASE_DIR, 'logs', 'security.log'),
-            'formatter': 'standard',
+            'formatter': 'file_formatter',
         },
         'mail_admins': {
             'level': 'ERROR',
             'class': 'django.utils.log.AdminEmailHandler',
-            'formatter': 'detailed',
+            'formatter': 'email_formatter',
         },
     },
     'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'propagate': True,
+        },
         'django.request': {
-            'handlers': ['mail_admins', 'file_errors'],
+            'handlers': ['mail_admins'],
             'level': 'ERROR',
-            'propagate': True,
-        },
-        'django.server': {
-            'handlers': ['mail_admins', 'file_errors'],
-            'level': 'ERROR',
-            'propagate': True,
-        },
-        'django.security': {
-            'handlers': ['file_security'],
-            'level': 'INFO',
-            'propagate': True,
+            'propagate': False,
+        }
+    },
+    'filters': {
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue',
         },
     },
 }
 
-# Условные настройки в зависимости от значения DEBUG
-if DEBUG:
-    LOGGING['handlers']['console']['level'] = 'DEBUG'
-    LOGGING['handlers']['file_general']['level'] = 'INFO'
-    LOGGING['handlers']['mail_admins']['level'] = 'ERROR'
-else:
-    LOGGING['handlers']['console']['level'] = 'WARNING'
-    LOGGING['handlers']['file_general']['level'] = 'INFO'
-    LOGGING['handlers']['mail_admins']['level'] = 'ERROR'
-
-# Добавление логгирования почтовых сообщений в AdminEmailHandler
-mail_admins_handler = LOGGING['handlers']['mail_admins']
-mail_admins_handler['filters'] = ['require_debug_false']
-
-# Настройка фильтров
-LOGGING['filters'] = {
-    'require_debug_false': {
-        '()': 'django.utils.log.RequireDebugFalse',
-    },
-}
-
-# Применение настроек логирования
-logging.config.dictConfig(LOGGING)
 
 # Application definition
 
